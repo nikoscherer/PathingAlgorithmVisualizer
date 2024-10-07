@@ -1,12 +1,17 @@
 from Types.Node import Node
 
 class Graph:
-    def __init__(self, _verticesID):
+    def __init__(self, _verticesID, _obstacles):
         self.vertices = []
         self.vertMap = {}
+        self.obstacles = _obstacles
 
-        for vert in _verticesID:    
-            node = Node(vert, [])
+        for vert in _verticesID:
+            node = Node(vert, [], False)
+
+            if vert in _obstacles:
+                node.setObstacle(True)
+
             self.vertices.append(node)
             self.vertMap[vert] = self.vertices[len(self.vertices) - 1]
 

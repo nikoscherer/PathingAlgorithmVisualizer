@@ -1,4 +1,4 @@
-class BreadthFirstSearch:
+class DepthFirstSearch:
     def __init__(self, _graph):
         self.graph = _graph
         self.curr = None
@@ -12,13 +12,13 @@ class BreadthFirstSearch:
             self.queue.append(start)
             
         if(len(self.queue) != 0):
-            curr = self.queue[0]
+            curr = self.queue[len(self.queue) - 1]
 
             if(curr == target):
                 print("FOUND")
                 return
             
-            self.queue.pop(0)
+            self.queue.pop(len(self.queue) - 1)
             
             if curr not in self.visited:
                 self.visited.add(curr)

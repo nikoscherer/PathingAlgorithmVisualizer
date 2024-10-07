@@ -3,22 +3,55 @@ import sys
 
 from Types.Graph import Graph
 from BreadthFirstSearch import BreadthFirstSearch
+from DepthFirstSearch import DepthFirstSearch
+
+WINDOW_HEIGHT = 1280
+WINDOW_WIDTH = 1280
+
+# Variables
+GRID_WIDTH = 20
+GRID_HEIGHT = 20
 
 BLACK = (35, 35, 35)
 WHITE = (180, 180, 180)
+FULL_WHITE = (255, 255, 255)
+TEXT = (100, 100, 100)
 
 START = (255, 125, 29)
 SEARCHED = (255, 215, 29)
 TARGET = (255, 79, 29)
 
-searched = {}
+def createObstacleH(arr, firstID, secondID):
+    for i in range (firstID, secondID + 1):
+        arr.append(i)
 
-WINDOW_HEIGHT = 1200
-WINDOW_WIDTH = 1200
+def createObstacleV(arr, firstID, secondID):
+    for i in range(firstID, secondID + GRID_HEIGHT, GRID_HEIGHT):
+        arr.append(i)
 
-# Variables
-GRID_WIDTH = 20
-GRID_HEIGHT = 20
+obstacles = []
+
+createObstacleH(obstacles, 1, 19)
+createObstacleH(obstacles, 60, 78)
+createObstacleV(obstacles, 98, 138)
+createObstacleH(obstacles, 176, 179)
+createObstacleV(obstacles, 116, 156)
+createObstacleH(obstacles, 100, 114)
+createObstacleV(obstacles, 134, 214)
+createObstacleH(obstacles, 216, 218)
+createObstacleV(obstacles, 216, 296)
+createObstacleH(obstacles, 312, 316)
+createObstacleV(obstacles, 238, 318)
+createObstacleV(obstacles, 132, 292)
+createObstacleV(obstacles, 311, 351)
+createObstacleH(obstacles, 351, 354)
+createObstacleH(obstacles, 356, 359)
+createObstacleH(obstacles, 376, 376)
+createObstacleH(obstacles, 390, 394)
+createObstacleV(obstacles, 309, 389)
+createObstacleH(obstacles, 289, 291)
+
+searched = []
 
 startNode = [0, 0]
 targetNode = [GRID_WIDTH - 10, GRID_HEIGHT - 5]
@@ -31,7 +64,7 @@ for y in range(GRID_WIDTH):
 
 print(grid)
 
-graph = Graph(grid)
+graph = Graph(grid, obstacles)
 
 for y in range(0, GRID_HEIGHT):
     for x in range(0, GRID_WIDTH):
@@ -52,18 +85,26 @@ for y in range(0, GRID_HEIGHT):
             graph.connect(id, left)
 
 bfs = BreadthFirstSearch(graph)
+dfs = DepthFirstSearch(graph)
 
+pygame.init()
+font = pygame.font.Font(None, 20)
 
 
 def main():
-    global SCREEN, CLOCK
-    pygame.init()
+    global SCREEN, CLOCK, displayTimer
+
+    loop = 0
+
     SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     CLOCK = pygame.time.Clock()
     SCREEN.fill(BLACK)
 
     while True:
-        bfs.search(searched, startNode[0] + (startNode[1] * GRID_WIDTH), targetNode[0] + (targetNode[1] * GRID_WIDTH))
+        if loop >= 5:
+            dfs.search(searched, startNode[0] + (startNode[1] * GRID_WIDTH), targetNode[0] + (targetNode[1] * GRID_WIDTH))
+            #bfs.search(searched, startNode[0] + (startNode[1] * GRID_WIDTH), targetNode[0] + (targetNode[1] * GRID_WIDTH))
+            loop = 0
 
         drawGrid(searched)
         for event in pygame.event.get():
@@ -73,13 +114,15 @@ def main():
 
         pygame.display.update()
 
-        pygame.time.wait(500)
-
+        loop = loop + 1
 
 def drawGrid(searched):
     for x in range(0, WINDOW_WIDTH, int(WINDOW_WIDTH / GRID_WIDTH)):
         for y in range(0, WINDOW_HEIGHT, int(WINDOW_HEIGHT / GRID_HEIGHT)):
             rect = pygame.Rect(x, y, WINDOW_WIDTH / GRID_WIDTH, WINDOW_HEIGHT / GRID_HEIGHT)
+
+            id = (x // (WINDOW_WIDTH // GRID_WIDTH)) + \
+                (y // (WINDOW_HEIGHT // GRID_HEIGHT)) * GRID_WIDTH
 
             color = BLACK
             if(x == startNode[0] * (WINDOW_WIDTH / GRID_WIDTH) and y == startNode[1] * (WINDOW_HEIGHT / GRID_HEIGHT)):
@@ -87,14 +130,24 @@ def drawGrid(searched):
             elif(x == targetNode[0] * (WINDOW_WIDTH / GRID_WIDTH) and y == targetNode[1] * (WINDOW_HEIGHT / GRID_HEIGHT)):
                 color = TARGET
             else:
-                if (x + (y * GRID_HEIGHT) * (WINDOW_WIDTH / GRID_WIDTH)) in searched:
+                
+                if id in obstacles:
+                    color = FULL_WHITE
+                if id in searched:
                     color = SEARCHED
 
             pygame.draw.rect(SCREEN, color, rect)
             pygame.draw.rect(SCREEN, WHITE, rect, 1)
 
-
-
-
+            id_text = font.render(str(id), True, TEXT)
+            corner = rect.bottomleft
+            calc = [
+                corner[0] + (rect.centerx - corner[0]) / 3,
+                corner[1] + (rect.centery - corner[1]) / 3,
+            ]
+            text_rect = id_text.get_rect(center=calc)
+            SCREEN.blit(id_text, text_rect)
+            
+            
 
 main()
