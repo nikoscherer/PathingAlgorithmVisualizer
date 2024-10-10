@@ -14,15 +14,15 @@ from Utils import Places
 WINDOW_HEIGHT = 1280
 WINDOW_WIDTH = 1280
 
-bBox = [.3, .3]
+bBox = [0.08, 0.08]
 
 path = True
 
 
-place = Places.Italy.ROME
+place = Places.USA.MANHATTAN
 
 # Create nodes based off of osmnx
-G = ox.graph_from_place(place, network_type='drive')
+G = ox.graph_from_place(place, network_type='drive', retain_all=True)
 geocode = ox.geocode(place)
 graphNodes = G.nodes(data=True)
 

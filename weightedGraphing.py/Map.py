@@ -79,6 +79,7 @@ class Map:
         # Draw Nodes
         for node in self.vertices:
             color = Color.WHITE
+            radius = 1
 
             # Normalize location
             normalized = [
@@ -89,14 +90,16 @@ class Map:
             # Check type to change color
             if node.id in self.algorithm.visited:
                 color = Color.VISITED
+                pygame.draw.circle(SCREEN, color, radius=1, center=normalized)
             if node == self.start:
                 color = Color.START
+                radius = 5
             if node == self.end:
                 color = Color.TARGET
+                radius = 5
 
-            pygame.draw.circle(SCREEN, color, radius=2, center=normalized)
-            ...
-        ...
+            pygame.draw.circle(SCREEN, color, radius=radius, center=normalized)
+
 
 
     def loop(self, search):
@@ -111,4 +114,3 @@ class Map:
                 sys.exit()
 
         pygame.display.update()
-
