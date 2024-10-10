@@ -9,6 +9,9 @@ class Color:
     VISITED = (255, 215, 29)
     TARGET = (255, 79, 29)
 
+class Places:
+    class Italy:
+        ROME = 'Rome, Italy'
 
 # Math Functions
 def calculateWeight(n1, n2):

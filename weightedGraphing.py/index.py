@@ -6,41 +6,49 @@ from Node import Node
 
 from BreadthFirstSearch import BreadthFirstSearch
 
+import osmnx as ox
+
+from Utils import Places
+
+# Variables
 WINDOW_HEIGHT = 1280
 WINDOW_WIDTH = 1280
 
-BLACK = (30, 30, 30)
+bBox = [.3, .3]
+
+path = True
+
+
+place = Places.Italy.ROME
+
+# Create nodes based off of osmnx
+G = ox.graph_from_place(place, network_type='drive')
+geocode = ox.geocode(place)
+graphNodes = G.nodes(data=True)
+
+nodes = []
+
+for id, node in graphNodes:
+    nodes.append(Node([node['x'], node['y']], id))
 
 # _mapSize represented in (longitude,latitude), same for each node coordinate.
-map = Map([8, 8], [WINDOW_WIDTH, WINDOW_HEIGHT], 
-        [
-            Node([0, 0], 0), 
-            Node([1, 1], 1), 
-            Node([1, -1], 2), 
-            Node([0, -1], 3), 
-            Node([2, 2], 4),
-            Node([3, 3], 5),
-            Node([3, 2], 6)
-        ])
+map = Map(bBox, [WINDOW_WIDTH, WINDOW_HEIGHT], nodes, [nodes[0].pos[0], nodes[0].pos[1]])
+
+for id, node in graphNodes:
+    neighbors = list(G.neighbors(id))
+    for neighbor in neighbors:
+        map.connect(id, neighbor)
 
 bfs = BreadthFirstSearch(map)
 
-map.setStartAndEnd(0, 3)
+map.setStartAndEnd(ox.nearest_nodes(G, geocode[1] + .01, geocode[0]), ox.nearest_nodes(G, geocode[1] + .03, geocode[0] + .03))
 map.setAlgorithm(bfs)
-
-map.connect(0, 1)
-map.connect(1, 2)
-map.connect(2, 0)
-map.connect(2, 3)
-map.connect(1, 4)
-map.connect(4, 5)
-map.connect(5, 6)
 
 def main():
     map.init()
 
     while True:
-        map.loop()
+        map.loop(path)
 
 
 main()

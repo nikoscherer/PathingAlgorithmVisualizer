@@ -30,7 +30,5 @@ class BreadthFirstSearch:
             for adj in self.map.vertMap[self.curr].neighbors:
                 if adj not in self.queue and adj not in self.visited:
                     self.queue.append(adj)
-
-            return self.visited
         else:
             print("Done")

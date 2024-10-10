@@ -20,6 +20,21 @@ class Map:
         for node in self.vertices:
             self.vertMap[node.id] = node
 
+    def __init__(self, _mapSize, _screenSize, _nodes, normal):
+        self.MAP_WIDTH = _mapSize[0]
+        self.MAP_HEIGHT = _mapSize[1]
+
+        self.WINDOW_WIDTH = _screenSize[0]
+        self.WINDOW_HEIGHT = _screenSize[1]
+
+        self.vertices = _nodes
+        self.vertMap = {}
+
+        for node in self.vertices:
+            node.pos[0] = node.pos[0] - normal[0]
+            node.pos[1] = node.pos[1] - normal[1]
+            self.vertMap[node.id] = node
+
     def setAlgorithm(self, _algorithm):
         self.algorithm = _algorithm
 
@@ -54,7 +69,12 @@ class Map:
                     self.WINDOW_HEIGHT - ((neighbor.pos[1] + self.MAP_HEIGHT / 2) / self.MAP_HEIGHT) * self.WINDOW_HEIGHT
                 ]
 
-                pygame.draw.line(SCREEN, Color.WHITE, normalized1, normalized2, 2)
+                color = Color.WHITE
+
+                if node.id in self.algorithm.visited and id in self.algorithm.visited:
+                    color = Color.VISITED
+
+                pygame.draw.line(SCREEN, color, normalized1, normalized2, 2)
 
         # Draw Nodes
         for node in self.vertices:
@@ -74,13 +94,15 @@ class Map:
             if node == self.end:
                 color = Color.TARGET
 
-            pygame.draw.circle(SCREEN, color, radius=(7.5 * ((self.WINDOW_WIDTH + self.WINDOW_HEIGHT) / 2 / (1280))), center=normalized)
+            pygame.draw.circle(SCREEN, color, radius=2, center=normalized)
             ...
         ...
 
 
-    def loop(self):
-        searched = self.algorithm.search(self.start.id, self.end.id)
+    def loop(self, search):
+        if search:
+            self.algorithm.search(self.start.id, self.end.id)
+
         self.drawMap()
 
         for event in pygame.event.get():
