@@ -4,6 +4,7 @@ class DepthFirstSearch:
         self.curr = None
         self.visited = set()
         self.queue = []
+        self.done = False
 
 
     def search(self, searched, start, target):
@@ -15,6 +16,7 @@ class DepthFirstSearch:
             curr = self.queue[len(self.queue) - 1]
 
             if(curr == target):
+                self.done = True
                 print("FOUND")
                 return
             
@@ -29,4 +31,5 @@ class DepthFirstSearch:
                     self.queue.append(adj)
 
         else:
+
             print("Done")

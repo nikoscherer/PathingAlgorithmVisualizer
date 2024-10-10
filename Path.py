@@ -101,7 +101,7 @@ font = pygame.font.Font(None, 20)
 
 
 def main():
-    global SCREEN, CLOCK, displayTimer
+    global SCREEN, CLOCK
 
     loop = 0
 
@@ -110,7 +110,7 @@ def main():
     SCREEN.fill(BLACK)
 
     while True:
-        if loop >= 5:
+        if loop >= 5 and not bfs.done:
             #dfs.search(searched, startNode[0] + (startNode[1] * GRID_WIDTH), targetNode[0] + (targetNode[1] * GRID_WIDTH))
             bfs.search(searched, startNode[0] + (startNode[1] * GRID_WIDTH), targetNode[0] + (targetNode[1] * GRID_WIDTH))
             loop = 0
@@ -123,7 +123,10 @@ def main():
 
         pygame.display.update()
 
-        loop = loop + 1
+        if not bfs.done:
+            loop = loop + 1
+
+
 
 def drawGrid(searched):
     for x in range(0, WINDOW_WIDTH, int(WINDOW_WIDTH / GRID_WIDTH)):
