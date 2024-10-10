@@ -20,10 +20,17 @@ class Map:
         for node in self.vertices:
             self.vertMap[node.id] = node
 
+    def setAlgorithm(self, _algorithm):
+        self.algorithm = _algorithm
+
     def connect(self, id1, id2):
         if not id2 in self.vertMap[id1].neighbors:
             self.vertMap[id1].neighbors.append(id2)
             self.vertMap[id2].neighbors.append(id1)
+
+    def setStartAndEnd(self, _start, _end):
+        self.start = self.vertMap[_start]
+        self.end = self.vertMap[_end]
 
     def init(self):
         global SCREEN, CLOCK
@@ -33,8 +40,6 @@ class Map:
         SCREEN.fill(Color.BLACK)
 
     def drawMap(self):
-        # 2 for loops is around n*log(n) time complexity !!
-
         # Draw Edges
         for node in self.vertices:
             for id in node.neighbors:
@@ -53,17 +58,29 @@ class Map:
 
         # Draw Nodes
         for node in self.vertices:
+            color = Color.WHITE
+
             # Normalize location
             normalized = [
                 ((node.pos[0] + self.MAP_WIDTH / 2) / self.MAP_WIDTH) * self.WINDOW_WIDTH,
                 self.WINDOW_HEIGHT - ((node.pos[1] + self.MAP_HEIGHT / 2) / self.MAP_HEIGHT) * self.WINDOW_HEIGHT
             ]
 
-            pygame.draw.circle(SCREEN, Color.WHITE, radius=7.5, center=normalized)
+            # Check type to change color
+            if node.id in self.algorithm.visited:
+                color = Color.VISITED
+            if node == self.start:
+                color = Color.START
+            if node == self.end:
+                color = Color.TARGET
+
+            pygame.draw.circle(SCREEN, color, radius=(7.5 * ((self.WINDOW_WIDTH + self.WINDOW_HEIGHT) / 2 / (1280))), center=normalized)
             ...
         ...
 
+
     def loop(self):
+        searched = self.algorithm.search(self.start.id, self.end.id)
         self.drawMap()
 
         for event in pygame.event.get():

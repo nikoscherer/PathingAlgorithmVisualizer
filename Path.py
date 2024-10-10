@@ -2,7 +2,7 @@ import pygame
 import sys
 
 from Types.UnweightedGraph import Graph
-from BreadthFirstSearch import BreadthFirstSearch
+from BreadthFirstSearchOLD import BreadthFirstSearch
 from DepthFirstSearch import DepthFirstSearch
 
 WINDOW_HEIGHT = 1280
