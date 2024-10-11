@@ -16,7 +16,7 @@ WINDOW_WIDTH = 1280
 
 bBox = [0.08, 0.08]
 
-path = True
+path = False
 
 
 place = Places.USA.MANHATTAN
@@ -24,6 +24,8 @@ place = Places.USA.MANHATTAN
 # Create nodes based off of osmnx
 G = ox.graph_from_place(place, network_type='drive', retain_all=True)
 geocode = ox.geocode(place)
+print(geocode[1])
+print(geocode[0])
 graphNodes = G.nodes(data=True)
 
 nodes = []
@@ -41,14 +43,30 @@ for id, node in graphNodes:
 
 bfs = BreadthFirstSearch(map)
 
-map.setStartAndEnd(ox.nearest_nodes(G, geocode[1] + .01, geocode[0]), ox.nearest_nodes(G, geocode[1] + .03, geocode[0] + .03))
+map.setStartAndEnd(ox.nearest_nodes(G, geocode[1], geocode[0]), ox.nearest_nodes(G, geocode[1] + .03, geocode[0] + .03))
 map.setAlgorithm(bfs)
 
 def main():
+    global path
+
     map.init()
 
     while True:
         map.loop(path)
 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                pos = [pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]]
 
+                if event.button == 1: # LEFT CLICK
+                    nearest = map.nearest_node(pos[0], pos[1])
+                    map.setStart(nearest)
+                elif event.button == 3: # RIGHT CLICK
+                    nearest = map.nearest_node(pos[0], pos[1])
+                    map.setEnd(nearest)
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                path = True
 main()

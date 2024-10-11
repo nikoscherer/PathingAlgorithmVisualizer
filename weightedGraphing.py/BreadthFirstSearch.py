@@ -18,8 +18,9 @@ class BreadthFirstSearch:
             self.curr = self.queue[0]
 
             if(self.curr == target):
-                print("FOUND")
+                self.visited.add(self.curr)
                 self.done = True
+                print("FOUND")
                 return
             
             self.queue.pop(0)

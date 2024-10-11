@@ -6,6 +6,8 @@ from Utils import Color
 
 from Node import Node
 
+import osmnx as ox
+
 class Map:
     def __init__(self, _mapSize, _screenSize, _nodes):
         self.MAP_WIDTH = _mapSize[0]
@@ -20,7 +22,7 @@ class Map:
         for node in self.vertices:
             self.vertMap[node.id] = node
 
-    def __init__(self, _mapSize, _screenSize, _nodes, normal):
+    def __init__(self, _mapSize, _screenSize, _nodes, _normal):
         self.MAP_WIDTH = _mapSize[0]
         self.MAP_HEIGHT = _mapSize[1]
 
@@ -29,10 +31,11 @@ class Map:
 
         self.vertices = _nodes
         self.vertMap = {}
+        self.normal = _normal
 
         for node in self.vertices:
-            node.pos[0] = node.pos[0] - normal[0]
-            node.pos[1] = node.pos[1] - normal[1]
+            node.pos[0] = node.pos[0] - self.normal[0]
+            node.pos[1] = node.pos[1] - self.normal[1]
             self.vertMap[node.id] = node
 
     def setAlgorithm(self, _algorithm):
@@ -47,6 +50,31 @@ class Map:
         self.start = self.vertMap[_start]
         self.end = self.vertMap[_end]
 
+    def setStart(self, _start):
+        self.start = self.vertMap[_start]
+
+    def setEnd(self, _end):
+        self.end = self.vertMap[_end]
+
+    def nearest_node(self, x, y):
+        normalX = -((self.MAP_WIDTH / 2) - (x / self.WINDOW_WIDTH) * self.MAP_WIDTH)
+        normalY = (self.MAP_HEIGHT / 2) - (y / self.WINDOW_HEIGHT) * self.MAP_HEIGHT
+
+        nearest = None
+        minDist = float('inf')
+
+        for node in self.vertices:
+            dist = Utils.calculateDistance(normalX, normalY, node.pos[0], node.pos[1])
+
+            if dist < minDist:
+                nearest = node.id
+                minDist = dist
+
+        print(f'Nearest node: {nearest}, Distance: {minDist}')
+        return nearest
+        
+
+
     def init(self):
         global SCREEN, CLOCK
 
@@ -55,6 +83,8 @@ class Map:
         SCREEN.fill(Color.BLACK)
 
     def drawMap(self):
+        SCREEN.fill(Color.BLACK)
+
         # Draw Edges
         for node in self.vertices:
             for id in node.neighbors:
@@ -107,10 +137,5 @@ class Map:
             self.algorithm.search(self.start.id, self.end.id)
 
         self.drawMap()
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
 
         pygame.display.update()

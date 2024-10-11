@@ -16,8 +16,15 @@ class Places:
         ROME = 'Rome, Italy'
 
 # Math Functions
-def calculateWeight(n1, n2):
-    return math.sqrt(pow(n1, 2) + pow(n2, 2))
+def calculateHypo(x, y):
+    return math.sqrt(pow(x, 2) + pow(y, 2))
+
+def calculateDistance(x1, y1, x2, y2):
+    diff = [
+        x2 - x1,
+        y2 - y1
+    ]
+    return calculateHypo(diff[0], diff[1])
 
 def calculatePos(n1, n2, t):
     return [
