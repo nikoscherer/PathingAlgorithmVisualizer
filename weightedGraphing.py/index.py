@@ -15,17 +15,19 @@ from Utils import Places
 WINDOW_HEIGHT = 1280
 WINDOW_WIDTH = 1280
 
-bBox = [0.1, 0.1]
+bBox = [0.15, 0.15]
 
 path = False
 
 
-place = Places.USA.MANHATTAN
+place = Places.Italy.ROME
 
 # Create nodes based off of osmnx
 G = ox.graph_from_place(place, network_type='drive', retain_all=True)
 geocode = ox.geocode(place)
 graphNodes = G.nodes(data=True)
+
+print(geocode)
 
 nodes = []
 
@@ -33,7 +35,7 @@ for id, node in graphNodes:
     nodes.append(Node([node['x'], node['y']], id))
 
 # _mapSize represented in (longitude,latitude), same for each node coordinate.
-map = Map(bBox, [WINDOW_WIDTH, WINDOW_HEIGHT], nodes, [nodes[0].pos[0], nodes[0].pos[1]])
+map = Map(bBox, [WINDOW_WIDTH, WINDOW_HEIGHT], nodes, [nodes[0].pos[0], nodes[0].pos[1] + .06])
 
 for id, node in graphNodes:
     neighbors = list(G.neighbors(id))

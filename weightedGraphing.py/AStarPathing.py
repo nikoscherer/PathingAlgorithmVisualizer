@@ -1,5 +1,7 @@
 import Utils
 
+import heapq
+
 class AStarPathing:
     def __init__(self, _map):
         self.map = _map
@@ -42,6 +44,8 @@ class AStarPathing:
                 gCost = Utils.calculateDistance(node.pos[0], node.pos[1], startNode.pos[0], startNode.pos[1])
                 hCost = Utils.calculateDistance(node.pos[0], node.pos[1], targetNode.pos[0], targetNode.pos[1])
                 fCost = hCost + gCost
+
+                
 
                 if fCost < minCost:
                     closestID = id

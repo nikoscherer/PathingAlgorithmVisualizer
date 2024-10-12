@@ -118,7 +118,7 @@ class Map:
                     self.WINDOW_HEIGHT - ((neighbor.pos[1] + self.MAP_HEIGHT / 2) / self.MAP_HEIGHT) * self.WINDOW_HEIGHT
                 ]
 
-                color = Color.WHITE
+                color = Color.GRAY
                 if p is not None:
                     if node.id in p and id in p:
                         color = Color.DONE
@@ -131,7 +131,7 @@ class Map:
 
         # Draw Nodes
         for node in self.vertices:
-            color = Color.WHITE
+            color = Color.GRAY
             radius = 1
 
             # Normalize location
@@ -155,8 +155,6 @@ class Map:
                 radius = 5
 
             pygame.draw.circle(SCREEN, color, radius=radius, center=normalized)
-
-
 
     def loop(self, search):
         if search:
