@@ -5,6 +5,7 @@ from Map import Map
 from Node import Node
 
 from BreadthFirstSearch import BreadthFirstSearch
+from AStarPathing import AStarPathing
 
 import osmnx as ox
 
@@ -14,7 +15,7 @@ from Utils import Places
 WINDOW_HEIGHT = 1280
 WINDOW_WIDTH = 1280
 
-bBox = [0.08, 0.08]
+bBox = [0.1, 0.1]
 
 path = False
 
@@ -24,8 +25,6 @@ place = Places.USA.MANHATTAN
 # Create nodes based off of osmnx
 G = ox.graph_from_place(place, network_type='drive', retain_all=True)
 geocode = ox.geocode(place)
-print(geocode[1])
-print(geocode[0])
 graphNodes = G.nodes(data=True)
 
 nodes = []
@@ -41,10 +40,11 @@ for id, node in graphNodes:
     for neighbor in neighbors:
         map.connect(id, neighbor)
 
-bfs = BreadthFirstSearch(map)
+#bfs = BreadthFirstSearch(map)
+aStar = AStarPathing(map)
 
 map.setStartAndEnd(ox.nearest_nodes(G, geocode[1], geocode[0]), ox.nearest_nodes(G, geocode[1] + .03, geocode[0] + .03))
-map.setAlgorithm(bfs)
+map.setAlgorithm(aStar)
 
 def main():
     global path
@@ -56,6 +56,7 @@ def main():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -69,4 +70,5 @@ def main():
                     map.setEnd(nearest)
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 path = True
+
 main()

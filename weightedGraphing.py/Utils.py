@@ -9,6 +9,9 @@ class Color:
     VISITED = (255, 215, 29)
     TARGET = (255, 79, 29)
 
+    DONE = (255, 79, 29)
+    GRAY = (150, 150, 150)
+
 class Places:
     class USA:
         MANHATTAN = 'Manhattan, New York, USA'

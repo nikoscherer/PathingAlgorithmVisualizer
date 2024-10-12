@@ -56,6 +56,18 @@ class Map:
     def setEnd(self, _end):
         self.end = self.vertMap[_end]
 
+    def xToScreen(self, x):
+        return ((x + self.MAP_WIDTH / 2) / self.MAP_WIDTH) * self.WINDOW_WIDTH
+
+    def yToScreen(self, y):
+        return self.WINDOW_HEIGHT - ((y + self.MAP_HEIGHT / 2) / self.MAP_HEIGHT) * self.WINDOW_HEIGHT
+    
+    def coordToScreen(self, coordinate):
+        return [
+            self.xToScreen(coordinate[0]),
+            self.yToScreen(coordinate[1])
+        ]
+
     def nearest_node(self, x, y):
         normalX = -((self.MAP_WIDTH / 2) - (x / self.WINDOW_WIDTH) * self.MAP_WIDTH)
         normalY = (self.MAP_HEIGHT / 2) - (y / self.WINDOW_HEIGHT) * self.MAP_HEIGHT
@@ -70,10 +82,7 @@ class Map:
                 nearest = node.id
                 minDist = dist
 
-        print(f'Nearest node: {nearest}, Distance: {minDist}')
         return nearest
-        
-
 
     def init(self):
         global SCREEN, CLOCK
@@ -82,10 +91,20 @@ class Map:
         CLOCK = pygame.time.Clock()
         SCREEN.fill(Color.BLACK)
 
+
+    f = True
+
     def drawMap(self):
+        global f
         SCREEN.fill(Color.BLACK)
 
+        p = None
+
         # Draw Edges
+        if self.algorithm.done and self.f:
+            p = self.algorithm.reconstructPath()
+ 
+
         for node in self.vertices:
             for id in node.neighbors:
                 neighbor = self.vertMap[id]
@@ -100,8 +119,12 @@ class Map:
                 ]
 
                 color = Color.WHITE
-
-                if node.id in self.algorithm.visited and id in self.algorithm.visited:
+                if p is not None:
+                    if node.id in p and id in p:
+                        color = Color.DONE
+                    else:
+                        color = Color.GRAY
+                elif node.id in self.algorithm.visited and id in self.algorithm.visited:
                     color = Color.VISITED
 
                 pygame.draw.line(SCREEN, color, normalized1, normalized2, 2)
@@ -118,7 +141,10 @@ class Map:
             ]
 
             # Check type to change color
-            if node.id in self.algorithm.visited:
+            if p is not None:
+                if node.id in p:
+                    color = Color.DONE
+            if node in self.algorithm.visited:
                 color = Color.VISITED
                 pygame.draw.circle(SCREEN, color, radius=1, center=normalized)
             if node == self.start:
