@@ -22,7 +22,7 @@ path = False
 
 place = Places.Italy.ROME
 
-# Create nodes based off of osmnx
+# Change to graph_from_bbox
 G = ox.graph_from_place(place, network_type='drive', retain_all=True)
 geocode = ox.geocode(place)
 graphNodes = G.nodes(data=True)
@@ -34,7 +34,6 @@ nodes = []
 for id, node in graphNodes:
     nodes.append(Node([node['x'], node['y']], id))
 
-# _mapSize represented in (longitude,latitude), same for each node coordinate.
 map = Map(bBox, [WINDOW_WIDTH, WINDOW_HEIGHT], nodes, [nodes[0].pos[0], nodes[0].pos[1] + .06])
 
 for id, node in graphNodes:
@@ -45,8 +44,8 @@ for id, node in graphNodes:
 #bfs = BreadthFirstSearch(map)
 aStar = AStarPathing(map)
 
-map.setStartAndEnd(ox.nearest_nodes(G, geocode[1], geocode[0]), ox.nearest_nodes(G, geocode[1] + .03, geocode[0] + .03))
 map.setAlgorithm(aStar)
+map.setStartAndEnd(ox.nearest_nodes(G, geocode[1], geocode[0]), ox.nearest_nodes(G, geocode[1] + .03, geocode[0] + .03))
 
 def main():
     global path

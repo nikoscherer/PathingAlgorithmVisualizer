@@ -8,20 +8,27 @@ class AStarPathing:
         self.curr = None
         self.visited = set()
         self.visit = []
+        self.inVisit = set()
         self.done = False
         self.parent = {}
 
+    def calculateCost(self, startNode, node, targetNode):
+        gCost = Utils.calculateDistance(node.pos[0], node.pos[1], startNode.pos[0], startNode.pos[1])
+        hCost = Utils.calculateDistance(node.pos[0], node.pos[1], targetNode.pos[0], targetNode.pos[1])
+
+        return hCost + gCost
 
     def search(self, start, target):
         if self.curr is None:
             self.start = start
             self.end = target
-            self.curr = start
-            self.visit.append(start)
-            self.visited.add(start)
-
-            for n in self.map.vertMap[start].neighbors:
-                self.visit.append(n)
+            self.curr = None
+            heapq.heappush(self.visit, (0, start))
+            self.inVisit.add(start)
+        
+        self.curr = heapq.heappop(self.visit)[1]
+        self.inVisit.remove(self.curr)
+        self.visited.add(self.curr)
 
         if self.curr == target:
             print("DONE")
@@ -31,33 +38,16 @@ class AStarPathing:
         startNode = self.map.vertMap[start]
         targetNode = self.map.vertMap[target]
 
-        self.visit.remove(self.curr)
-        self.visited.add(self.curr)
+        for neighbor in self.map.vertMap[self.curr].neighbors:
+            if neighbor not in self.visited and neighbor not in self.inVisit:
+                node = self.map.vertMap[neighbor]
 
-        closestID = None
-        minCost = float('inf')
-            
-        for id in self.visit:
-            node = self.map.vertMap[id]
+                fCost = self.calculateCost(startNode, node, targetNode)
 
-            if id not in self.visited:
-                gCost = Utils.calculateDistance(node.pos[0], node.pos[1], startNode.pos[0], startNode.pos[1])
-                hCost = Utils.calculateDistance(node.pos[0], node.pos[1], targetNode.pos[0], targetNode.pos[1])
-                fCost = hCost + gCost
+                heapq.heappush(self.visit, (fCost, neighbor))
+                self.inVisit.add(neighbor)
 
-                
-
-                if fCost < minCost:
-                    closestID = id
-                    minCost = fCost
-
-        for n in self.map.vertMap[self.curr].neighbors:
-            if n not in self.visited:
-                self.visit.append(n)
-
-        self.parent[closestID] = self.curr
-        self.curr = closestID
-
+                self.parent[neighbor] = self.curr
     def reconstructPath(self):
         path = [] 
         next = self.end

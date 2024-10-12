@@ -144,7 +144,7 @@ class Map:
             if p is not None:
                 if node.id in p:
                     color = Color.DONE
-            if node in self.algorithm.visited:
+            elif node.id in self.algorithm.visited:
                 color = Color.VISITED
                 pygame.draw.circle(SCREEN, color, radius=1, center=normalized)
             if node == self.start:
@@ -157,7 +157,7 @@ class Map:
             pygame.draw.circle(SCREEN, color, radius=radius, center=normalized)
 
     def loop(self, search):
-        if search:
+        if search and not self.algorithm.done:
             self.algorithm.search(self.start.id, self.end.id)
 
         self.drawMap()
